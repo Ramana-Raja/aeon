@@ -23,7 +23,7 @@ pr = context_dict["event"]["issue"].get("pull_request")
 
 # Assign tagged used to the issue if the comment includes the trigger phrase
 body = comment_body.lower()
-if "@aeon-actions-bot" in body and "assign" in body and not pr:
+if "@aeon-actions-bot" in body and "assign" in body:
     mentioned_users = re.findall(r"@[a-zA-Z0-9_-]+", comment_body)
     mentioned_users = [user[1:] for user in mentioned_users]
     mentioned_users.remove("aeon-actions-bot")
