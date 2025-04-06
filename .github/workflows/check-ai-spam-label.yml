@@ -1,0 +1,42 @@
+name: Check AI Spam Label on PR
+
+on:
+  pull_request:
+    types: [labeled]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.id }}
+  cancel-in-progress: true
+
+jobs:
+  check-ai-spam:
+    if: contains(github.event.label.name, 'AI Spam')
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Create app token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.PR_APP_ID }}
+          private-key: ${{ secrets.PR_APP_KEY }}
+
+      - name: Checkout utilities
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/utilities
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -Uq PyGithub
+
+      - name: Run AI Spam Label Checker
+        run: python .github/utilities/remove_ai_spam.py
+        env:
+          CONTEXT_GITHUB: ${{ toJson(github) }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
