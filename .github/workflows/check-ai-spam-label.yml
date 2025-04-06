@@ -1,4 +1,4 @@
-name: Check AI Spam Label on PR
+name: Check AI Spam label on PR
 
 on:
   pull_request:
@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: pip install -Uq PyGithub
 
-      - name: Run AI Spam Label Checker
+      - name: Run AI Spam label checker
         run: python .github/utilities/remove_ai_spam.py
         env:
           CONTEXT_GITHUB: ${{ toJson(github) }}
